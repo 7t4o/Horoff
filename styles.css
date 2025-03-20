@@ -1,0 +1,101 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #222;
+    position: relative;
+}
+
+.container {
+    display: inline;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.bourder {
+    width: 914px;
+    height: 620px;
+    border-top: 90px solid red;
+    border-bottom: 90px solid red;
+    border-right: 130px solid green;
+    border-left: 130px solid green;
+    position: relative;
+}
+
+.abscont {
+    position: absolute;
+    top: -35px;
+    left: -75px;
+}
+
+.row {
+    display: flex;
+    margin-top: -35.5px;
+}
+
+.hexagon-border {
+    display: flex;
+    padding: 5px;
+    background: black;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    cursor: pointer;
+    border: none;
+    outline: none;
+    margin-left: -5px;
+}
+
+.hexagon {
+    width: 140px;
+    height: 120px;
+    background-color: white;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.row2 {
+    margin-left: 72.5px;
+    z-index: -1;
+}
+
+.first-row {
+    margin-top: 0;
+}
+
+.first-col {
+    margin-left: 0;
+}
+
+.bg-white {
+    background-color: white;
+}
+
+.bg-green {
+    background-color: green;
+}
+
+.bg-red {
+    background-color: red;
+}
+
+@media (max-width: 914px) {
+    body {
+        display: block;
+        position: relative;
+    }
+
+    .container{
+        width: 100%;
+    }
+}

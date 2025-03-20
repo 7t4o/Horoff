@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>مسابقة حروف</title>
+</head>
+<!-- التحديث الاخير -->
+<body>
+    <div class="container">
+        <div class="bourder" id="app">
+            <div class="abscont">
+                <div v-for="i in 5" :key="i" :class="['row', {row2: i%2 === 0, row1: i%2 !== 0, 'first-row': i === 1}]">
+                    <button v-for="j in 5" :key="j" :class="['hexagon-border ', { 'first-col': j === 1 }]">
+                        <div class="hexagon bg-white" color="1"  @click="changeColor($event)">
+                            {{ randomChars[(i - 1) * 5 + j - 1] }}
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    randomChars: []
+                }
+            },
+            created() {
+                this.randomChars = this.generateRandomChars(25)
+            },
+            methods: {
+                generateRandomChars(n) {
+                    const chars = 'أبتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('')
+                    const shuffled = chars.sort(() => 0.5 - Math.random())
+                    return shuffled.slice(0, n)
+                },
+                changeColor(ev) {
+                    const element = ev.currentTarget;
+                    let color = parseInt(element.getAttribute("color"));
+                    color = (color % 3) + 1;
+
+                    element.setAttribute("color", color);
+                    element.classList.remove("bg-white", "bg-green", "bg-red");
+                    const colorClass = color === 1 ? "bg-white" : color === 2 ? "bg-green" : "bg-red";
+                    element.classList.add(colorClass);
+                }
+            }
+        })
+        app.mount('#app')
+    </script>
+</body>
+</html>
