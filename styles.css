@@ -49,6 +49,7 @@ body {
     cursor: pointer;
     border: none;
     outline: none;
+    box-shadow: none;
     margin-left: -5px;
 }
 
