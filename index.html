@@ -1,37 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>مسابقة حروف</title>
 </head>
-<!-- التحديث الاخير -->
+
 <body>
     <div class="container">
-        <div class="bourder" id="app">
+        <div class="board" id="app">
             <div class="abscont">
                 <div v-for="i in 5" :key="i" :class="['row', {row2: i%2 === 0, row1: i%2 !== 0, 'first-row': i === 1}]">
                     <button v-for="j in 5" :key="j" :class="['hexagon-border ', { 'first-col': j === 1 }]">
-                        <div class="hexagon bg-white" color="1"  @click="changeColor($event)">
-                            {{ randomChars[(i - 1) * 5 + j - 1] }}
+                        <div class="hexagon bg-white" :ref="'btn' + index(i, j)" :index="index(i, j)" color="1"
+                            @click="ask($event)">
+                            {{ randomChars[index(i, j-1)] }}
                         </div>
                     </button>
                 </div>
             </div>
+            <div v-if="showQuestion" class="overlay">
+                <div class="question-box">
+                    <p @click="showAnswer = !showAnswer">{{ question }}</p>
+                    <p v-if="showAnswer" class="answer">{{ answer }}</p>
+                    <div class="buttons">
+                        <button @click="setColor('bg-white'); showAnswer = false" class="reset">o</button>
+                        <button @click="showQuestion = false; showAnswer = false" class="close">x</button>
+                        <button @click="setColor('bg-green')" class="bg-green score">أخضر</button>
+                        <button @click="setColor('bg-red')" class="bg-red score">أحمر</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    
+
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
         const app = Vue.createApp({
             data() {
                 return {
-                    randomChars: []
-                }
+                    randomChars: [],
+                    showQuestion: false,
+                    showAnswer: false,
+                    question: '',
+                    answer: '',
+                    selectedIndex: null,
+                    data: {},
+                };
             },
-            created() {
+            async created() {
                 this.randomChars = this.generateRandomChars(25)
+                try {
+                    const response = await fetch('./questionsList.json'); // لاحظ استخدام './'
+                    if (!response.ok) {
+                        throw new Error('خطأ في تحميل ملف JSON');
+                    }
+                    const jsonData = await response.json();
+                    this.data = jsonData;
+                    console.log(this.data); // لعرض البيانات في وحدة التحكم
+                } catch (error) {
+                    console.error('حدث خطأ:', error);
+                }
             },
             methods: {
                 generateRandomChars(n) {
@@ -39,19 +70,38 @@
                     const shuffled = chars.sort(() => 0.5 - Math.random())
                     return shuffled.slice(0, n)
                 },
-                changeColor(ev) {
+                ask(ev) {
                     const element = ev.currentTarget;
-                    let color = parseInt(element.getAttribute("color"));
-                    color = (color % 3) + 1;
+                    const index = parseInt(element.getAttribute('index'));
+                    this.selectedIndex = index;
 
-                    element.setAttribute("color", color);
-                    element.classList.remove("bg-white", "bg-green", "bg-red");
-                    const colorClass = color === 1 ? "bg-white" : color === 2 ? "bg-green" : "bg-red";
-                    element.classList.add(colorClass);
-                }
-            }
+                    let char = element.childNodes[0].textContent;
+                    this.displayQuestion(char);
+                },
+                displayQuestion(char) {
+                    const randomIndex = Math.floor(Math.random() * this.data[char].length);
+                    this.question = this.data[char][randomIndex]['question'];
+                    this.answer = this.data[char][randomIndex]['answer'];
+                    console.log(this.question);
+                    this.showQuestion = true;
+                },
+                setColor(color) {
+                    if (this.selectedIndex !== null) {
+                        console.log(this.selectedIndex);
+                        const element = this.$refs['btn' + this.selectedIndex][0];
+
+                        element.classList.remove("bg-white", "bg-green", "bg-red");
+                        element.classList.add(color);
+                        this.showQuestion = false;
+                    }
+                },
+                index(i, j) {
+                    return (i - 1) * 5 + j;
+                },
+            },
         })
         app.mount('#app')
     </script>
 </body>
+
 </html>
